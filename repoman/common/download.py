@@ -6,6 +6,7 @@ import requests.packages.urllib3 as urllib3
 
 
 RETRY_PROTOCOL_PREFIXES = ('http://', 'https://')
+CHUNK_SIZE = 4096
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ def to_fd(url, fd):
 
     with make_session_object() as session:
         stream = session.get(url, stream=True, verify=True)
-        for chunk in stream.iter_content():
+        for chunk in stream.iter_content(chunk_size=CHUNK_SIZE):
             fd.write(chunk)
 
 
