@@ -55,7 +55,6 @@ def make_session_object():
     """
 
     session = requests.Session()
-    adapter = make_adapter_object()
     for prefix in RETRY_PROTOCOL_PREFIXES:
-        session.mount(prefix, adapter)
+        session.mount(prefix, make_adapter_object())
     return session
