@@ -58,6 +58,7 @@ from ...utils import (
 )
 from ...artifact import (
     Artifact,
+    ArtifactInode,
     ArtifactVersion,
     ArtifactList,
     ArtifactName,
@@ -299,20 +300,43 @@ class RPM(Artifact):
         return self.__str__()
 
 
+class RPMVersion(ArtifactVersion):
+    """Set of artifacts inodes for a RPM version"""
+    def __init__(self, version, inode_class=ArtifactInode):
+        super(RPMVersion, self).__init__(self, version, inode_class)
+
+    def __eq__(self, other):
+        return cmpfullver(self.version, other.version) == 0
+
+    def __ne__(self, other):
+        return cmpfullver(self.version, other.version) != 0
+
+    def __lt__(self, other):
+        return cmpfullver(self.version, other.version) < 0
+
+    def __le__(self, other):
+        return cmpfullver(self.version, other.version) <= 0
+
+    def __gt__(self, other):
+        return cmpfullver(self.version, other.version) > 0
+
+    def __ge__(self, other):
+        return cmpfullver(self.version, other.version) >= 0
+
+
 class RPMName(ArtifactName):
     """List of available versions for a package name"""
     def add_pkg(self, pkg, onlyifnewer):
         is_there_newer = next(
             (
-                ver for ver in self.keys()
-                if cmpfullver(ver, pkg.ver_rel) >= 0
+                ver for ver in self.keys() if ver <= pkg.ver_rel
             ),
             False,
         )
         if onlyifnewer and (is_there_newer or pkg.ver_rel in self):
             return False
         elif pkg.ver_rel not in self:
-            self[pkg.ver_rel] = ArtifactVersion(pkg.ver_rel)
+            self[pkg.ver_rel] = RPMVersion(pkg.ver_rel)
         return self[pkg.ver_rel].add_pkg(pkg)
 
     def get_latest(self, num=1):
@@ -330,7 +354,7 @@ class RPMName(ArtifactName):
                 fmatch=lambda art: not art.is_source
             )
         ]
-        sorted_list.sort(cmp=cmpfullver)
+        sorted_list.sort(reverse=True)
         latest = {}
         if num > len(sorted_list):
             num = len(sorted_list)

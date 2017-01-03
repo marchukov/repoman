@@ -149,17 +149,20 @@ def cmpver(ver1, ver2):
     expect when comparing versions yourself).
     Thought for version strings in the form:
        x.y.z
+
+    The return value macthes cmp() function and is negative if ver1 < ver2,
+    zero if ver1 == ver2 and strictly positive if ver1 > ver2.
     """
     ver1 = '.' in ver1 and ver1.split('.') or (ver1,)
     ver2 = '.' in ver2 and ver2.split('.') or (ver2,)
     ver1 = [tryint(i) for i in ver1]
     ver2 = [tryint(i) for i in ver2]
     if ver1 > ver2:
-        return -1
+        return 1
     if ver1 == ver2:
         return 0
     else:
-        return 1
+        return -1
 
 
 def cmpfullver(fullver1, fullver2):

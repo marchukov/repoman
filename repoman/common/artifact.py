@@ -215,6 +215,23 @@ class ArtifactVersion(dict, object):
             self[inode].delete(noop)
             self.pop(inode)
 
+    def __eq__(self, other):
+        return cmpfullver(self.version, other.version) == 0
+
+    def __ne__(self, other):
+        return cmpfullver(self.version, other.version) != 0
+
+    def __lt__(self, other):
+        return cmpfullver(self.version, other.version) < 0
+
+    def __le__(self, other):
+        return cmpfullver(self.version, other.version) <= 0
+
+    def __gt__(self, other):
+        return cmpfullver(self.version, other.version) > 0
+
+    def __ge__(self, other):
+        return cmpfullver(self.version, other.version) >= 0
 
 class ArtifactName(dict, object):
     """Dict of available versions for an artifact name"""
@@ -228,8 +245,7 @@ class ArtifactName(dict, object):
             artifact.ver_rel in self or
             next(
                 (
-                    ver for ver in self.keys()
-                    if cmpfullver(ver, artifact.version) >= 0
+                    ver for ver in self.keys() if ver <= artifact.version
                 ),
                 None,
             )
@@ -249,7 +265,7 @@ class ArtifactName(dict, object):
         if not num:
             num = len(self)
         sorted_list = self.keys()
-        sorted_list.sort(cmp=cmpfullver)
+        sorted_list.sort(reverse=True)
         latest = {}
         if num > len(sorted_list):
             num = len(sorted_list)
