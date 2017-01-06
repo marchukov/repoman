@@ -303,7 +303,7 @@ class RPM(Artifact):
 class RPMVersion(ArtifactVersion):
     """Set of artifacts inodes for a RPM version"""
     def __init__(self, version, inode_class=ArtifactInode):
-        super(RPMVersion, self).__init__(self, version, inode_class)
+        super(RPMVersion, self).__init__(version, inode_class)
 
     def __eq__(self, other):
         return cmpfullver(self.version, other.version) == 0

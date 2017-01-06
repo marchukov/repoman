@@ -184,6 +184,27 @@ class ArtifactVersion(dict, object):
         super(ArtifactVersion, self).__init__(self)
         self.inode_class = inode_class
 
+    def __repr__(self):
+        return "%s('%s')" % (self.__class__.__name__, self.version)
+
+    def __eq__(self, other):
+        return cmpfullver(self.version, other.version) == 0
+
+    def __ne__(self, other):
+        return cmpfullver(self.version, other.version) != 0
+
+    def __lt__(self, other):
+        return cmpfullver(self.version, other.version) < 0
+
+    def __le__(self, other):
+        return cmpfullver(self.version, other.version) <= 0
+
+    def __gt__(self, other):
+        return cmpfullver(self.version, other.version) > 0
+
+    def __ge__(self, other):
+        return cmpfullver(self.version, other.version) >= 0
+
     def add_artifact(self, artifact):
         if artifact.inode not in self:
             self[artifact.inode] = self.inode_class(artifact.inode)
@@ -215,23 +236,6 @@ class ArtifactVersion(dict, object):
             self[inode].delete(noop)
             self.pop(inode)
 
-    def __eq__(self, other):
-        return cmpfullver(self.version, other.version) == 0
-
-    def __ne__(self, other):
-        return cmpfullver(self.version, other.version) != 0
-
-    def __lt__(self, other):
-        return cmpfullver(self.version, other.version) < 0
-
-    def __le__(self, other):
-        return cmpfullver(self.version, other.version) <= 0
-
-    def __gt__(self, other):
-        return cmpfullver(self.version, other.version) > 0
-
-    def __ge__(self, other):
-        return cmpfullver(self.version, other.version) >= 0
 
 class ArtifactName(dict, object):
     """Dict of available versions for an artifact name"""
